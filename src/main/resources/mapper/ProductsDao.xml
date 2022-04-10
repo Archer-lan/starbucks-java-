@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ProductsDao">
+
+    <resultMap type="com.example.demo.entity.Products" id="ProductsMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="imageurl" column="imageurl" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="ProductsMap">
+        select
+          id, imageurl, title, price, type
+        from products
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="ProductsMap">
+        select
+          id, imageurl, title, price, type
+        from products
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="imageurl != null and imageurl != ''">
+                and imageurl = #{imageurl}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from products
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="imageurl != null and imageurl != ''">
+                and imageurl = #{imageurl}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into products(imageurl, title, price, type)
+        values (#{imageurl}, #{title}, #{price}, #{type})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into products(imageurl, title, price, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.imageurl}, #{entity.title}, #{entity.price}, #{entity.type})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into products(imageurl, title, price, type)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.imageurl}, #{entity.title}, #{entity.price}, #{entity.type})
+        </foreach>
+        on duplicate key update
+        imageurl = values(imageurl),
+        title = values(title),
+        price = values(price),
+        type = values(type)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update products
+        <set>
+            <if test="imageurl != null and imageurl != ''">
+                imageurl = #{imageurl},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="type != null and type != ''">
+                type = #{type},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from products where id = #{id}
+    </delete>
+
+    <select id="getProInfos" resultMap="ProductsMap">
+        select * from products
+    </select>
+
+    <select id="getProByType" resultMap="ProductsMap">
+        select * from products where products.type=#{protype}
+    </select>
+
+    <select id="getProById" resultMap="ProductsMap">
+        select * from products where products.id=#{id}
+    </select>
+</mapper>
+

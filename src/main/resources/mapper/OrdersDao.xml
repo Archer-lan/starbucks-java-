@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.OrdersDao">
+
+    <resultMap type="com.example.demo.entity.Orders" id="OrdersMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="openid" column="openid" jdbcType="VARCHAR"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="num" column="num" jdbcType="INTEGER"/>
+        <result property="makedate" column="makedate" jdbcType="VARCHAR"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="placedate" column="placedate" jdbcType="VARCHAR"/>
+        <result property="usertell" column="usertell" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="temperature" column="temperature" jdbcType="VARCHAR"/>
+        <result property="size" column="size" jdbcType="VARCHAR"/>
+
+        <result property="products.price" column="price" jdbcType="INTEGER"/>
+        <result property="products.imageurl" column="imageurl" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrdersMap">
+        select
+          id, openid, title, num, makedate, username, placedate, usertell, state
+        from orders
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrdersMap">
+        select
+          id, openid, title, num, makedate, username, placedate, usertell, state
+        from orders
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="openid != null and openid != ''">
+                and openid = #{openid}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="num != null">
+                and num = #{num}
+            </if>
+            <if test="makedate != null and makedate != ''">
+                and makedate = #{makedate}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="placedate != null and placedate != ''">
+                and placedate = #{placedate}
+            </if>
+            <if test="usertell != null and usertell != ''">
+                and usertell = #{usertell}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from orders
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="openid != null and openid != ''">
+                and openid = #{openid}
+            </if>
+            <if test="title != null and title != ''">
+                and title = #{title}
+            </if>
+            <if test="num != null">
+                and num = #{num}
+            </if>
+            <if test="makedate != null and makedate != ''">
+                and makedate = #{makedate}
+            </if>
+            <if test="username != null and username != ''">
+                and username = #{username}
+            </if>
+            <if test="placedate != null and placedate != ''">
+                and placedate = #{placedate}
+            </if>
+            <if test="usertell != null and usertell != ''">
+                and usertell = #{usertell}
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into orders(openid, title, num, makedate, username, placedate, usertell, state)
+        values (#{openid}, #{title}, #{num}, #{makedate}, #{username}, #{placedate}, #{usertell}, #{state})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into orders(openid, title, num, makedate, username, placedate, usertell, state)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.openid}, #{entity.title}, #{entity.num}, #{entity.makedate}, #{entity.username}, #{entity.placedate}, #{entity.usertell}, #{entity.state})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into orders(openid, title, num, makedate, username, placedate, usertell, state)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.openid}, #{entity.title}, #{entity.num}, #{entity.makedate}, #{entity.username}, #{entity.placedate}, #{entity.usertell}, #{entity.state})
+        </foreach>
+        on duplicate key update
+        openid = values(openid),
+        title = values(title),
+        num = values(num),
+        makedate = values(makedate),
+        username = values(username),
+        placedate = values(placedate),
+        usertell = values(usertell),
+        state = values(state)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update orders
+        <set>
+            <if test="openid != null and openid != ''">
+                openid = #{openid},
+            </if>
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="num != null">
+                num = #{num},
+            </if>
+            <if test="makedate != null and makedate != ''">
+                makedate = #{makedate},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="placedate != null and placedate != ''">
+                placedate = #{placedate},
+            </if>
+            <if test="usertell != null and usertell != ''">
+                usertell = #{usertell},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from orders where id = #{id}
+    </delete>
+
+    <select id="getOrdersByOpenid" resultMap="OrdersMap">
+        select *,p.price,p.imageurl
+        from orders o,products p
+        where o.openid=#{openid} and p.title=o.title
+    </select>
+
+    <select id="queryOrder" resultMap="OrdersMap">
+        select o.id,o.title,o.num,o.makedate,o.username,o.usertell,o.state,o.temperature,o.size,p.price,p.imageurl
+        from orders o,products p
+        where o.openid=#{openid} and o.state=#{orderstate}
+    </select>
+</mapper>
+
