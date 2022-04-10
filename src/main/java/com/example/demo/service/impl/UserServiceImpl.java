@@ -140,7 +140,7 @@ public class UserServiceImpl implements UserService {
 
         try {
             //调用微信的登录接口获取session_key和openid
-            String url ="https://api.weixin.qq.com/sns/jscode2session?appid=wxd69fb17ab457e849&secret=1177f55bdb430d59594ac2b2c3de8643&js_code="+code+"&grant_type=authorization_code";
+            String url ="https://api.weixin.qq.com/sns/jscode2session?appid=（微信appid）&secret=(微信aapid密钥)&js_code="+code+"&grant_type=authorization_code";
             //模拟get访问url
             String result = HttpClientUtil.doGet(url);
             System.out.println(result);
